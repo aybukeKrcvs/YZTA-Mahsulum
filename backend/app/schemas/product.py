@@ -1,4 +1,14 @@
-from pydantic import BaseModel
+try:
+    from pydantic import BaseModel  # pyright: ignore[reportMissingImports]
+except ImportError:  # pragma: no cover
+    from dataclasses import dataclass
+
+    class BaseModel:  # minimal fallback for environments without pydantic
+        def __init_subclass__(cls, **kwargs):
+            return super().__init_subclass__(**kwargs)
+
+        def model_dump(self):
+            return self.__dict__
 from typing import Optional
 from datetime import datetime
 
